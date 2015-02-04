@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 import json
 
 from weighted_sort.sort import sort
@@ -17,10 +17,10 @@ def weighted_sort(request):
     except ValueError:
         return HttpResponseBadRequest("400 Bad Request: Malformed JSON")
     try:
-        result = sort(data["items"], data["weights"])
+        result = {"sorted": sort(data["items"], data["weights"])}
     except AttributeError:
         r = HttpResponseBadRequest("400 Bad Request: Wrong JSON data")
         r.write("The following fields must be present: items, weights")
         return r
 
-    return HttpResponse(json.dumps(result))
+    return JsonResponse(result)
